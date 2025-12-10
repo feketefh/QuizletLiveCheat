@@ -8,7 +8,7 @@
 // @author      feketefh
 // @updateURL   https://raw.githubusercontent.com/feketefh/QuizletLiveCheat/main/build/bundle.user.js
 // @downloadURL https://raw.githubusercontent.com/feketefh/QuizletLiveCheat/main/build/bundle.user.js
-// @version     0.2.0
+// @version     0.3.0
 // @license     MIT
 // @grant       unsafeWindow
 // ==/UserScript==
