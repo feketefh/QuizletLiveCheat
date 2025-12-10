@@ -116,15 +116,6 @@
 	}
 
 	/**
-	 * @template {keyof SVGElementTagNameMap} K
-	 * @param {K} name
-	 * @returns {SVGElement}
-	 */
-	function svg_element(name) {
-		return document.createElementNS('http://www.w3.org/2000/svg', name);
-	}
-
-	/**
 	 * @param {string} data
 	 * @returns {Text}
 	 */
@@ -647,86 +638,72 @@
 	// (27:0) {#if visible}
 	function create_if_block(ctx) {
 		let div4;
-		let button3;
-		let svg;
-		let path;
-		let t0;
 		let button0;
+		let t0;
+		let button1;
 		let t2;
 		let div3;
 		let div0;
 		let t4;
 		let div2;
-		let button1;
+		let button2;
 		let t6;
 		let div1;
 		let t7_value = /*helpModes*/ ctx[2][/*helpMode*/ ctx[1]] + "";
 		let t7;
 		let t8;
-		let button2;
+		let button3;
 		let mounted;
 		let dispose;
 
 		return {
 			c() {
 				div4 = element("div");
-				button3 = element("button");
-				svg = svg_element("svg");
-				path = svg_element("path");
-				t0 = space();
 				button0 = element("button");
-				button0.textContent = "Answer Question";
+				button0.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>`;
+				t0 = space();
+				button1 = element("button");
+				button1.textContent = "Answer Question";
 				t2 = space();
 				div3 = element("div");
 				div0 = element("div");
 				div0.textContent = "Help Mode";
 				t4 = space();
 				div2 = element("div");
-				button1 = element("button");
-				button1.textContent = "<";
+				button2 = element("button");
+				button2.textContent = "<";
 				t6 = space();
 				div1 = element("div");
 				t7 = text(t7_value);
 				t8 = space();
-				button2 = element("button");
-				button2.textContent = ">";
-				attr(path, "d", "M1 1L13 13M13 1L1 13");
-				attr(path, "stroke", "currentColor");
-				attr(path, "stroke-width", "2");
-				attr(path, "stroke-linecap", "round");
-				attr(svg, "width", "14");
-				attr(svg, "height", "14");
-				attr(svg, "viewBox", "0 0 14 14");
-				attr(svg, "fill", "none");
-				attr(svg, "xmlns", "http://www.w3.org/2000/svg");
-				attr(button0, "class", "answer svelte-nf7cqx");
-				attr(button1, "class", "svelte-nf7cqx");
-				attr(div1, "class", "display");
+				button3 = element("button");
+				button3.textContent = ">";
+				attr(button0, "class", "close svelte-nf7cqx");
+				attr(button0, "aria-label", "Close");
+				attr(button1, "class", "answer svelte-nf7cqx");
 				attr(button2, "class", "svelte-nf7cqx");
+				attr(div1, "class", "display");
+				attr(button3, "class", "svelte-nf7cqx");
 				attr(div2, "class", "row helpControl svelte-nf7cqx");
 				attr(div3, "class", "help svelte-nf7cqx");
-				attr(button3, "class", "close svelte-nf7cqx");
-				attr(button3, "aria-label", "Close");
 				attr(div4, "class", "hud svelte-nf7cqx");
 			},
 			m(target, anchor) {
 				insert(target, div4, anchor);
-				append(div4, button3);
-				append(button3, svg);
-				append(svg, path);
-				append(button3, t0);
-				append(button3, button0);
-				append(button3, t2);
-				append(button3, div3);
+				append(div4, button0);
+				append(div4, t0);
+				append(div4, button1);
+				append(div4, t2);
+				append(div4, div3);
 				append(div3, div0);
 				append(div3, t4);
 				append(div3, div2);
-				append(div2, button1);
+				append(div2, button2);
 				append(div2, t6);
 				append(div2, div1);
 				append(div1, t7);
 				append(div2, t8);
-				append(div2, button2);
+				append(div2, button3);
 
 				if (!mounted) {
 					dispose = [
@@ -832,10 +809,10 @@
 			dispatch('helpMode', helpMode);
 		}
 
-		const click_handler = () => dispatch('answer');
-		const click_handler_1 = () => changeHelpMode(-1);
-		const click_handler_2 = () => changeHelpMode(1);
-		const click_handler_3 = () => close();
+		const click_handler = () => close();
+		const click_handler_1 = () => dispatch('answer');
+		const click_handler_2 = () => changeHelpMode(-1);
+		const click_handler_3 = () => changeHelpMode(1);
 
 		return [
 			visible,
