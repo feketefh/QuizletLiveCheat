@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "github.com/TheLazySquid/QuizletLiveCheat"
+    "url": "github.com/feketefh/QuizletLiveCheat"
   },
   "keywords": [
     "quizlet",
     "userscript",
     "tampermonkey"
   ],
-  "author": "TheLazySquid",
+  "author": "feketefh",
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",

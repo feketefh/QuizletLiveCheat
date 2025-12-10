@@ -20,12 +20,23 @@
 
         visible = !visible;
     }
+
+    function close() {
+        visible = false;
+        helpMode = 0;
+
+        dispatch('helpMode', helpMode);
+    }
 </script>
 
 <svelte:window on:keydown={onKeyDown} />
 
 {#if visible}
     <div class="hud">
+        <button on:click={() => close()} class="close" aria-label="Close">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
         <button on:click={() => dispatch('answer')} class="answer">Answer Question</button>
         <div class="help">
             <div>
@@ -63,6 +74,35 @@
     justify-content: space-between;
     align-items: space-between;
     width: 100%;
+}
+
+.hud .close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.hud .close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: rotate(90deg);
+}
+
+.hud .close:active {
+    transform: rotate(90deg) scale(0.9);
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
 .hud .answer {
