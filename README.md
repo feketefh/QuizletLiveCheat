@@ -26,4 +26,4 @@ Auto answer will only activate after a question is answered, be that with the bu
 ## Installation
 
 1. Install [ViolentMonkey](https://violentmonkey.github.io/get-it/) for your browser.
-2. Click on [this link](https://raw.githubusercontent.com/TheLazySquid/QuizletLiveCheat/main/build/bundle.user.js).
+2. Click on [this link](https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/bundle.user.js).
