@@ -8,7 +8,6 @@ enum HelpModes {
     Highlight
 }
 
-// this is ugly, but I don't think there's a better way
 const cardSelector = "#__next > div > div:nth-child(3) > div > div:nth-child(2) > div"
 
 let messageCount = 0;
@@ -20,23 +19,23 @@ let cards: HTMLElement[] = [];
 window.addEventListener('DOMContentLoaded', () => {
     const hud = new Hud({
         target: document.body,
-    });
+        props: {
+            onanswer: () => {
+                answer();
+            },
+            onhelpMode: (event: CustomEvent<number>) => {
+                helpMode = event.detail;
 
-    hud.$on('answer', () => {
-        answer();
-    });
-
-    hud.$on('helpMode', (event: CustomEvent<number>) => {
-        helpMode = event.detail;
-
-        if(helpMode === HelpModes.Highlight) {
-            setCardBorders();
-        } else {
-            document.querySelectorAll<HTMLElement>(cardSelector).forEach(card => {
-                card.style.border = "";
-            })
+                if(helpMode === HelpModes.Highlight) {
+                    setCardBorders();
+                } else {
+                    document.querySelectorAll<HTMLElement>(cardSelector).forEach(card => {
+                        card.style.border = "";
+                    })
+                }
+            }
         }
-    })
+    });
 })
 
 class NewWebSocket extends WebSocket {
@@ -163,7 +162,8 @@ unsafeWindow.answer = answer;
 const cardObserver = new MutationObserver((mutations) => {
     for(let mutation of mutations) {
         if(mutation.type !== "childList") continue;
-        for(let node of mutation.addedNodes) {
+        for (let i = 0; i < mutation.addedNodes.length; i++) {
+            const node = mutation.addedNodes[i];
             if(!(node instanceof HTMLElement)) continue;
             let foundCards: NodeListOf<HTMLElement>;
             if(node.matches(cardSelector)) {

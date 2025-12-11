@@ -635,7 +635,7 @@
 		append_styles(target, "svelte-nf7cqx", ".hud.svelte-nf7cqx.svelte-nf7cqx{position:absolute;top:10px;left:10px;width:300px;height:200px;z-index:999999999999;background-color:rgba(0, 0, 0, 0.9);border-radius:0.5em;display:flex;flex-direction:column;justify-content:space-evenly;align-items:center;color:white}.hud.svelte-nf7cqx .row.svelte-nf7cqx{display:flex;flex-direction:row;justify-content:space-between;align-items:space-between;width:100%}.hud.svelte-nf7cqx .close.svelte-nf7cqx{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background-color:rgba(255, 255, 255, 0.1);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255, 255, 255, 0.7);transition:all 0.2s ease;padding:0}.hud.svelte-nf7cqx .close.svelte-nf7cqx:hover{background-color:rgba(255, 255, 255, 0.2);color:white;transform:rotate(90deg)}.hud.svelte-nf7cqx .close.svelte-nf7cqx:active{transform:rotate(90deg) scale(0.9);background-color:rgba(255, 255, 255, 0.15)}.hud.svelte-nf7cqx .answer.svelte-nf7cqx{width:70%;height:50px;font-family:Verdana, Geneva, Tahoma, sans-serif;font-size:1em;border-radius:0.5em;background-color:white;color:black;border:none;transition:transform 0.3s ease}.hud.svelte-nf7cqx .answer.svelte-nf7cqx:active{transform:scale(0.93)}.hud.svelte-nf7cqx .help.svelte-nf7cqx{display:flex;flex-direction:column;align-items:center;width:85%}.hud.svelte-nf7cqx .helpControl button.svelte-nf7cqx{width:25px;height:25px;border-radius:0.5em;background-color:white;border:none;transition:transform 0.3s ease;margin:5px;color:black}");
 	}
 
-	// (27:0) {#if visible}
+	// (37:0) {#if visible}
 	function create_if_block(ctx) {
 		let div4;
 		let button0;
@@ -707,10 +707,10 @@
 
 				if (!mounted) {
 					dispose = [
-						listen(button0, "click", /*click_handler*/ ctx[7]),
-						listen(button1, "click", /*click_handler_1*/ ctx[8]),
-						listen(button2, "click", /*click_handler_2*/ ctx[9]),
-						listen(button3, "click", /*click_handler_3*/ ctx[10])
+						listen(button0, "click", /*close*/ ctx[4]),
+						listen(button1, "click", /*handleAnswer*/ ctx[5]),
+						listen(button2, "click", /*click_handler*/ ctx[9]),
+						listen(button3, "click", /*click_handler_1*/ ctx[10])
 					];
 
 					mounted = true;
@@ -746,7 +746,7 @@
 				insert(target, if_block_anchor, anchor);
 
 				if (!mounted) {
-					dispose = listen(window, "keydown", /*onKeyDown*/ ctx[5]);
+					dispose = listen(window, "keydown", /*onKeyDown*/ ctx[6]);
 					mounted = true;
 				}
 			},
@@ -779,6 +779,8 @@
 	}
 
 	function instance($$self, $$props, $$invalidate) {
+		let { onanswer = undefined } = $$props;
+		let { onhelpMode = undefined } = $$props;
 		let visible = true;
 
 		const helpModes = [
@@ -795,7 +797,23 @@
 			$$invalidate(1, helpMode += change);
 			if (helpMode < 0) $$invalidate(1, helpMode += helpModes.length);
 			$$invalidate(1, helpMode %= helpModes.length);
+
+			// Call both dispatcher and callback prop
 			dispatch('helpMode', helpMode);
+
+			onhelpMode?.(new CustomEvent('helpMode', { detail: helpMode }));
+		}
+
+		function close() {
+			$$invalidate(0, visible = false);
+			$$invalidate(1, helpMode = 0);
+			dispatch('helpMode', helpMode);
+			onhelpMode?.(new CustomEvent('helpMode', { detail: helpMode }));
+		}
+
+		function handleAnswer() {
+			dispatch('answer');
+			onanswer?.();
 		}
 
 		function onKeyDown(event) {
@@ -803,36 +821,33 @@
 			$$invalidate(0, visible = !visible);
 		}
 
-		function close() {
-			$$invalidate(0, visible = false);
-			$$invalidate(1, helpMode = 0);
-			dispatch('helpMode', helpMode);
-		}
+		const click_handler = () => changeHelpMode(-1);
+		const click_handler_1 = () => changeHelpMode(1);
 
-		const click_handler = () => close();
-		const click_handler_1 = () => dispatch('answer');
-		const click_handler_2 = () => changeHelpMode(-1);
-		const click_handler_3 = () => changeHelpMode(1);
+		$$self.$$set = $$props => {
+			if ('onanswer' in $$props) $$invalidate(7, onanswer = $$props.onanswer);
+			if ('onhelpMode' in $$props) $$invalidate(8, onhelpMode = $$props.onhelpMode);
+		};
 
 		return [
 			visible,
 			helpMode,
 			helpModes,
-			dispatch,
 			changeHelpMode,
-			onKeyDown,
 			close,
+			handleAnswer,
+			onKeyDown,
+			onanswer,
+			onhelpMode,
 			click_handler,
-			click_handler_1,
-			click_handler_2,
-			click_handler_3
+			click_handler_1
 		];
 	}
 
 	class Hud extends SvelteComponent {
 		constructor(options) {
 			super();
-			init(this, options, instance, create_fragment, safe_not_equal, {}, add_css);
+			init(this, options, instance, create_fragment, safe_not_equal, { onanswer: 7, onhelpMode: 8 }, add_css);
 		}
 	}
 
@@ -843,28 +858,29 @@
 	    HelpModes[HelpModes["AnswerDelayed"] = 2] = "AnswerDelayed";
 	    HelpModes[HelpModes["Highlight"] = 3] = "Highlight";
 	})(HelpModes || (HelpModes = {}));
-	// this is ugly, but I don't think there's a better way
 	const cardSelector = "#__next > div > div:nth-child(3) > div > div:nth-child(2) > div";
 	let messageCount = 0;
 	let socket = null;
 	let helpMode = 0;
 	let cards = [];
 	window.addEventListener('DOMContentLoaded', () => {
-	    const hud = new Hud({
+	    new Hud({
 	        target: document.body,
-	    });
-	    hud.$on('answer', () => {
-	        answer();
-	    });
-	    hud.$on('helpMode', (event) => {
-	        helpMode = event.detail;
-	        if (helpMode === HelpModes.Highlight) {
-	            setCardBorders();
-	        }
-	        else {
-	            document.querySelectorAll(cardSelector).forEach(card => {
-	                card.style.border = "";
-	            });
+	        props: {
+	            onanswer: () => {
+	                answer();
+	            },
+	            onhelpMode: (event) => {
+	                helpMode = event.detail;
+	                if (helpMode === HelpModes.Highlight) {
+	                    setCardBorders();
+	                }
+	                else {
+	                    document.querySelectorAll(cardSelector).forEach(card => {
+	                        card.style.border = "";
+	                    });
+	                }
+	            }
 	        }
 	    });
 	});
@@ -980,7 +996,8 @@
 	    for (let mutation of mutations) {
 	        if (mutation.type !== "childList")
 	            continue;
-	        for (let node of mutation.addedNodes) {
+	        for (let i = 0; i < mutation.addedNodes.length; i++) {
+	            const node = mutation.addedNodes[i];
 	            if (!(node instanceof HTMLElement))
 	                continue;
 	            let foundCards;

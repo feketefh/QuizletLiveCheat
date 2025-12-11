@@ -1,6 +1,10 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
 
+    // Event callback props
+    export let onanswer: (() => void) | undefined = undefined;
+    export let onhelpMode: ((event: CustomEvent<number>) => void) | undefined = undefined;
+
     let visible = true;
     const helpModes = ['None', 'Auto Answer (instant)', 'Auto Answer (wait)', 'Outline Correct Answer']
     let helpMode = 0;
@@ -12,13 +16,9 @@
         if (helpMode < 0) helpMode += helpModes.length;
         helpMode %= helpModes.length;
 
+        // Call both dispatcher and callback prop
         dispatch('helpMode', helpMode);
-    }
-
-    function onKeyDown(event: KeyboardEvent) {
-        if(event.key !== '\\') return;
-
-        visible = !visible;
+        onhelpMode?.(new CustomEvent('helpMode', { detail: helpMode }));
     }
 
     function close() {
@@ -26,6 +26,18 @@
         helpMode = 0;
 
         dispatch('helpMode', helpMode);
+        onhelpMode?.(new CustomEvent('helpMode', { detail: helpMode }));
+    }
+
+    function handleAnswer() {
+        dispatch('answer');
+        onanswer?.();
+    }
+
+    function onKeyDown(event: KeyboardEvent) {
+        if(event.key !== '\\') return;
+
+        visible = !visible;
     }
 </script>
 
@@ -33,12 +45,12 @@
 
 {#if visible}
     <div class="hud">
-        <button on:click={() => close()} class="close" aria-label="Close">
+        <button on:click={close} class="close" aria-label="Close">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
         </button>
-        <button on:click={() => dispatch('answer')} class="answer">Answer Question</button>
+        <button on:click={handleAnswer} class="answer">Answer Question</button>
         <div class="help">
             <div>
                 Help Mode
