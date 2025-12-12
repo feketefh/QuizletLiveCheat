@@ -13,6 +13,7 @@ const cardSelector = "#__next > div > div:nth-child(3) > div > div:nth-child(2) 
 let messageCount = 0;
 let socket: WebSocket | null = null;
 let helpMode: number = 0;
+let lastTap = 0;
 
 let cards: HTMLElement[] = [];
 

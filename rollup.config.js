@@ -5,7 +5,7 @@ const pkg = JSON.parse(fs.readFileSync('./package.json'));
 import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 import svelte from 'rollup-plugin-svelte';
-import sveltePreprocess from 'svelte-preprocess';
+import { sveltePreprocess } from 'svelte-preprocess'
 import metablock from 'rollup-plugin-userscript-metablock';
 
 export default {
