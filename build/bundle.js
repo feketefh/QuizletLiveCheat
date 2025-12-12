@@ -230,6 +230,38 @@
 	}
 
 	/**
+	 * The `onMount` function schedules a callback to run as soon as the component has been mounted to the DOM.
+	 * It must be called during the component's initialisation (but doesn't need to live *inside* the component;
+	 * it can be called from an external module).
+	 *
+	 * If a function is returned _synchronously_ from `onMount`, it will be called when the component is unmounted.
+	 *
+	 * `onMount` does not run inside a [server-side component](https://svelte.dev/docs#run-time-server-side-component-api).
+	 *
+	 * https://svelte.dev/docs/svelte#onmount
+	 * @template T
+	 * @param {() => import('./private.js').NotFunction<T> | Promise<import('./private.js').NotFunction<T>> | (() => any)} fn
+	 * @returns {void}
+	 */
+	function onMount(fn) {
+		get_current_component().$$.on_mount.push(fn);
+	}
+
+	/**
+	 * Schedules a callback to run immediately before the component is unmounted.
+	 *
+	 * Out of `onMount`, `beforeUpdate`, `afterUpdate` and `onDestroy`, this is the
+	 * only one that runs inside a server-side component.
+	 *
+	 * https://svelte.dev/docs/svelte#ondestroy
+	 * @param {() => any} fn
+	 * @returns {void}
+	 */
+	function onDestroy(fn) {
+		get_current_component().$$.on_destroy.push(fn);
+	}
+
+	/**
 	 * Creates an event dispatcher that can be used to dispatch [component events](https://svelte.dev/docs#template-syntax-component-directives-on-eventname).
 	 * Event dispatchers are functions that can take two arguments: `name` and `detail`.
 	 *
@@ -644,7 +676,7 @@
 		append_styles(target, "svelte-q2uzua", ".hud.svelte-q2uzua.svelte-q2uzua{position:absolute;top:10px;left:10px;width:300px;height:200px;z-index:999999999999;background-color:rgba(0, 0, 0, 0.9);border-radius:0.5em;display:flex;flex-direction:column;justify-content:space-evenly;align-items:center;color:white}.hud.svelte-q2uzua .row.svelte-q2uzua{display:flex;flex-direction:row;justify-content:space-between;align-items:space-between;width:100%}.hud.svelte-q2uzua .answer.svelte-q2uzua{width:70%;height:50px;font-family:Verdana, Geneva, Tahoma, sans-serif;font-size:1em;border-radius:0.5em;background-color:white;color:black;border:none;transition:transform 0.3s ease}.hud.svelte-q2uzua .answer.svelte-q2uzua:active{transform:scale(0.93)}.hud.svelte-q2uzua .help.svelte-q2uzua{display:flex;flex-direction:column;align-items:center;width:85%}.hud.svelte-q2uzua .helpControl button.svelte-q2uzua{width:25px;height:25px;border-radius:0.5em;background-color:white;border:none;transition:transform 0.3s ease;margin:5px;color:black}");
 	}
 
-	// (79:4) {#if visible}
+	// (111:4) {#if visible}
 	function create_if_block(ctx) {
 		let div4;
 		let button0;
@@ -781,6 +813,9 @@
 		};
 	}
 
+	const TAP_DELAY = 300; // ms between taps
+	const RESET_DELAY = 400; // ms to reset tap count
+
 	function instance($$self, $$props, $$invalidate) {
 		let { onanswer = undefined } = $$props;
 		let { onhelpMode = undefined } = $$props;
@@ -795,8 +830,9 @@
 
 		let helpMode = 0;
 		let lastHelpMode = 0;
-		let smallDevice = false;
-		let lastTap = 0;
+		let tapCount = 0;
+		let lastTapTime = 0;
+		let tapTimeout = null;
 
 		const attachListener = node => {
 			// attach a media query listener to the window
@@ -804,20 +840,52 @@
 
 			// every time the media query matches or unmatches
 			mediaQuery.addEventListener('change', ({ matches }) => {
-				// set the state of our variable
-				smallDevice = matches;
 			});
 		};
 
-		document.addEventListener("touchend", () => {
-			if (smallDevice == true) {
-				let now = Date.now();
+		function handleTouchEnd(e) {
+			const now = Date.now();
+			const timeSinceLastTap = now - lastTapTime;
 
-				if (now - lastTap < 300) {
-					multiTouchHandler();
-				}
+			// Clear existing timeout
+			if (tapTimeout) {
+				clearTimeout(tapTimeout);
+			}
 
-				lastTap = now;
+			// Increment or reset tap count based on timing
+			if (timeSinceLastTap < TAP_DELAY) {
+				tapCount++;
+			} else {
+				tapCount = 1;
+			}
+
+			lastTapTime = now;
+
+			// Check if we've reached triple tap
+			if (tapCount === 3) {
+				multiTouchHandler();
+				tapCount = 0;
+				lastTapTime = 0;
+			} else {
+				// Reset tap count after delay if no more taps
+				tapTimeout = setTimeout(
+					() => {
+						tapCount = 0;
+					},
+					RESET_DELAY
+				);
+			}
+		}
+
+		onMount(() => {
+			document.addEventListener('touchend', handleTouchEnd);
+		});
+
+		onDestroy(() => {
+			document.removeEventListener('touchend', handleTouchEnd);
+
+			if (tapTimeout) {
+				clearTimeout(tapTimeout);
 			}
 		});
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
+    import { onMount, onDestroy, createEventDispatcher } from "svelte";
 
     // Event callback props
     export let onanswer: (() => void) | undefined = undefined;
@@ -11,7 +11,12 @@
     let lastHelpMode = 0;
     let smallDevice: boolean = false;
 
-    let lastTap = 0;
+    let tapCount = 0;
+    let lastTapTime = 0;
+    let tapTimeout: ReturnType<typeof setTimeout> | null = null;
+    
+    const TAP_DELAY = 300; // ms between taps
+    const RESET_DELAY = 400; // ms to reset tap count
     
     const attachListener = (node: any): void => {
       // attach a media query listener to the window
@@ -24,13 +29,45 @@
       });
     }
 
-    document.addEventListener("touchend", () => {
-        if (smallDevice == true) {
-            let now = Date.now()
-            if (now - lastTap < 300) {
-                multiTouchHandler();
-            }
-            lastTap = now;
+    function handleTouchEnd(e: TouchEvent) {
+        const now = Date.now();
+        const timeSinceLastTap = now - lastTapTime;
+
+        // Clear existing timeout
+        if (tapTimeout) {
+            clearTimeout(tapTimeout);
+        }
+
+        // Increment or reset tap count based on timing
+        if (timeSinceLastTap < TAP_DELAY) {
+            tapCount++;
+        } else {
+            tapCount = 1;
+        }
+
+        lastTapTime = now;
+
+        // Check if we've reached triple tap
+        if (tapCount === 3) {
+            multiTouchHandler();
+            tapCount = 0;
+            lastTapTime = 0;
+        } else {
+            // Reset tap count after delay if no more taps
+            tapTimeout = setTimeout(() => {
+                tapCount = 0;
+            }, RESET_DELAY);
+        }
+    }
+
+    onMount(() => {
+        document.addEventListener('touchend', handleTouchEnd);
+    });
+
+    onDestroy(() => {
+        document.removeEventListener('touchend', handleTouchEnd);
+        if (tapTimeout) {
+            clearTimeout(tapTimeout);
         }
     });
 
