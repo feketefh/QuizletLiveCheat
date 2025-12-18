@@ -91,6 +91,10 @@
       isDragging = false;
     }
 
+    function stopDragPropagation(e: TouchEvent) {
+        e.stopPropagation();
+    }
+
     let dispatch = createEventDispatcher();
 
     function changeHelpMode(change: number) {
@@ -148,7 +152,7 @@
     on:keydown={onKeyDown} 
     on:mousemove={handleMove}
     on:mouseup={handleEnd}
-    on:touchmove={handleMove}
+    on:touchmove|preventDefault={handleMove}
     on:touchend={handleEnd}
 />
 
@@ -158,19 +162,19 @@
         <div class="hud" 
             style="left: {x}px; top: {y}px;" 
             on:mousedown={handleStart} 
-            on:touchstart={handleStart}
+            on:touchstart|preventDefault={handleStart}
             role="button"
             tabindex="0"
         >
-            <button on:click={handleAnswer} class="answer">Answer Question</button>
+            <button on:touchstart|stopPropagation on:click={handleAnswer} class="answer">Answer Question</button>
             <div class="help">
                 <div>
                     Help Mode
                 </div>
                 <div class="row helpControl">
-                    <button on:click={() => changeHelpMode(-1)}>&lt;</button>
+                    <button on:touchstart|stopPropagation on:click={() => changeHelpMode(-1)}>&lt;</button>
                     <div class="display">{ helpModes[helpMode] }</div>
-                    <button on:click={() => changeHelpMode(1)}>&gt;</button>
+                    <button on:touchstart|stopPropagation on:click={() => changeHelpMode(1)}>&gt;</button>
                 </div>
             </div>
         </div>
@@ -190,6 +194,9 @@
     justify-content: space-evenly;
     align-items: center;
     color: white;
+
+    touch-action: none;
+    user-select: none;
 }
 
 .hud .row {
