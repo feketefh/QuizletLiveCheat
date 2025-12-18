@@ -1,10 +1,12 @@
+## Original script was made by [TheLazySquid](https://github.com/TheLazySquid)
+
 # Quizlet Live Cheat
 
 This is a Tampermonkey userscript that lets you instantly answer questions in Quizlet live.
 
 ## Features
 
-After joining a game, a hud will appear with several options. The hud can be toggled with "\\" (backslash).
+After joining a game, a hud will appear with several options. The hud can be toggled with "\\" (backslash) or triple taps on mobile.
 
 #### Answer Question
 
@@ -25,5 +27,8 @@ Auto answer will only activate after a question is answered, be that with the bu
 
 ## Installation
 
-1. Install [ViolentMonkey](https://violentmonkey.github.io/get-it/) for your browser.
-2. Click on [this link](https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/bundle.user.js).
+1. Install an userscript manager:
+    - Firefox: [TamperMonkey](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/) or [ViolentMonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)
+    - Chrome (and other Chromium based browsers): [TamperMonkey](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
+    - Safari: [Usrescripts](https://apps.apple.com/us/app/userscripts/id1463298887)
+2. Click on [this link](https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/QuizletLiveAC.user.js) to install the userscript.
