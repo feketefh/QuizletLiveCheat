@@ -17,7 +17,7 @@ let lastTap = 0;
 
 let cards: HTMLElement[] = [];
 
-window.addEventListener('DOMContentLoaded', () => {
+function init() {
     const hud = new Hud({
         target: document.body,
         props: {
@@ -37,7 +37,19 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-})
+
+    // start observing cards as part of initialization
+    cardObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+}
+
+if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
 
 class NewWebSocket extends WebSocket {
     constructor(url: string | URL, protocols?: string | string[]) {
@@ -184,12 +196,7 @@ const cardObserver = new MutationObserver((mutations) => {
     }
 })
 
-window.addEventListener('DOMContentLoaded', () => {
-    cardObserver.observe(document.body, {
-        childList: true,
-        subtree: true
-    })
-})
+// removed duplicate DOMContentLoaded observer; initialization is handled by `init()` above
 
 let uid: string;
 function getPlayerId() {

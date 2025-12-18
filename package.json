@@ -1,6 +1,6 @@
 {
   "name": "quizletlivecheat",
-  "version": "0.5.9",
+  "version": "0.6.0",
   "description": "Allows you to automatically answer questions in Quizlet Live",
   "main": "src/main.ts",
   "type": "module",

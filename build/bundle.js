@@ -530,7 +530,7 @@
 	 *
 	 * @returns {void}
 	 */
-	function init(
+	function init$1(
 		component,
 		options,
 		instance,
@@ -1026,7 +1026,7 @@
 	class Hud extends SvelteComponent {
 		constructor(options) {
 			super();
-			init(this, options, instance, create_fragment, safe_not_equal, { onanswer: 11, onhelpMode: 12 }, add_css);
+			init$1(this, options, instance, create_fragment, safe_not_equal, { onanswer: 11, onhelpMode: 12 }, add_css);
 		}
 	}
 
@@ -1042,7 +1042,7 @@
 	let socket = null;
 	let helpMode = 0;
 	let cards = [];
-	window.addEventListener('DOMContentLoaded', () => {
+	function init() {
 	    new Hud({
 	        target: document.body,
 	        props: {
@@ -1062,7 +1062,18 @@
 	            }
 	        }
 	    });
-	});
+	    // start observing cards as part of initialization
+	    cardObserver.observe(document.body, {
+	        childList: true,
+	        subtree: true
+	    });
+	}
+	if (document.readyState === 'loading') {
+	    window.addEventListener('DOMContentLoaded', init);
+	}
+	else {
+	    init();
+	}
 	class NewWebSocket extends WebSocket {
 	    constructor(url, protocols) {
 	        super(url, protocols);
@@ -1195,12 +1206,7 @@
 	        }
 	    }
 	});
-	window.addEventListener('DOMContentLoaded', () => {
-	    cardObserver.observe(document.body, {
-	        childList: true,
-	        subtree: true
-	    });
-	});
+	// removed duplicate DOMContentLoaded observer; initialization is handled by `init()` above
 	let uid;
 	function getPlayerId() {
 	    if (uid)
