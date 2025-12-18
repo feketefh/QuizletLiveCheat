@@ -6,9 +6,9 @@
 // @run-at      document-start
 // @iconURL     https://assets.quizlet.com/a/j/dist/app/i/logo/2021/q-twilight.e27821d9baad165.png
 // @author      feketefh
-// @updateURL   https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/bundle.user.js
-// @downloadURL https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/bundle.user.js
-// @version     0.5.7
+// @updateURL   https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/QuizletLiveAC.user.js
+// @downloadURL https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/QuizletLiveAC.user.js
+// @version     0.5.8
 // @license     MIT
 // @grant       unsafeWindow
 // ==/UserScript==

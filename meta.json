@@ -9,6 +9,6 @@
     "description": "A userscript that lets you cheat in Quizlet Live",
     "iconURL": "https://assets.quizlet.com/a/j/dist/app/i/logo/2021/q-twilight.e27821d9baad165.png",
     "author": "feketefh",
-    "updateURL": "https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/bundle.user.js",
-    "downloadURL": "https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/bundle.user.js"
+    "updateURL": "https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/QuizletLiveAC.user.js",
+    "downloadURL": "https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/QuizletLiveAC.user.js"
 }
