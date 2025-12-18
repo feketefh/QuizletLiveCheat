@@ -671,7 +671,7 @@
 		append_styles(target, "svelte-ntd8nm", ".hud.svelte-ntd8nm.svelte-ntd8nm{position:absolute;width:300px;height:200px;z-index:999999999999;background-color:rgba(0, 0, 0, 0.9);border-radius:0.5em;display:flex;flex-direction:column;justify-content:space-evenly;align-items:center;color:white}.hud.svelte-ntd8nm .row.svelte-ntd8nm{display:flex;flex-direction:row;justify-content:space-between;align-items:space-between;width:100%}.hud.svelte-ntd8nm .answer.svelte-ntd8nm{width:70%;height:50px;font-family:Verdana, Geneva, Tahoma, sans-serif;font-size:1em;border-radius:0.5em;background-color:white;color:black;border:none;transition:transform 0.3s ease}.hud.svelte-ntd8nm .answer.svelte-ntd8nm:active{transform:scale(0.93)}.hud.svelte-ntd8nm .help.svelte-ntd8nm{display:flex;flex-direction:column;align-items:center;width:85%}.hud.svelte-ntd8nm .helpControl button.svelte-ntd8nm{width:25px;height:25px;border-radius:0.5em;background-color:white;border:none;transition:transform 0.3s ease;margin:5px;color:black}");
 	}
 
-	// (134:4) {#if visible}
+	// (129:4) {#if visible}
 	function create_if_block(ctx) {
 		let div4;
 		let button0;
@@ -855,12 +855,10 @@
 			const now = Date.now();
 			const timeSinceLastTap = now - lastTapTime;
 
-			// Clear existing timeout
 			if (tapTimeout) {
 				clearTimeout(tapTimeout);
 			}
 
-			// Increment or reset tap count based on timing
 			if (timeSinceLastTap < TAP_DELAY) {
 				tapCount++;
 			} else {
@@ -869,13 +867,11 @@
 
 			lastTapTime = now;
 
-			// Check if we've reached triple tap
 			if (tapCount === 3) {
 				multiTouchHandler();
 				tapCount = 0;
 				lastTapTime = 0;
 			} else {
-				// Reset tap count after delay if no more taps
 				tapTimeout = setTimeout(
 					() => {
 						tapCount = 0;
@@ -938,10 +934,7 @@
 			$$invalidate(1, helpMode += change);
 			if (helpMode < 0) $$invalidate(1, helpMode += helpModes.length);
 			$$invalidate(1, helpMode %= helpModes.length);
-
-			// Call both dispatcher and callback prop
 			dispatch('helpMode', helpMode);
-
 			onhelpMode?.(new CustomEvent('helpMode', { detail: helpMode }));
 		}
 

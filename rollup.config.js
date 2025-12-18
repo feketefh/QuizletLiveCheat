@@ -16,7 +16,7 @@ export default {
             format: 'iife'
         },
         {
-            file: 'build/bundle.user.js',
+            file: 'build/QuizletLiveAC.user.js',
             format: 'iife',
             plugins: [
                 metablock({
