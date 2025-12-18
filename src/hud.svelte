@@ -64,27 +64,33 @@
     });
 
     function handleStart(event: MouseEvent | TouchEvent) {
-      isDragging = true;
-      hasMoved = false;
+        isDragging = true;
+        hasMoved = false;
 
-      const clientX = event.type === 'mousedown' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
-      const clientY = event.type === 'mousedown' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
+        if (event.type === 'touchstart') {
+          event.preventDefault();
+        }
 
-      startX = clientX - x;
-      startY = clientY - y;
+        const clientX = event.type === 'mousedown' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
+        const clientY = event.type === 'mousedown' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
+
+        startX = clientX - x;
+        startY = clientY - y;
     }
 
     function handleMove(event: MouseEvent | TouchEvent) {
-      if (!isDragging) return;
+        if (!isDragging) return;
 
-      hasMoved = true;
-      event.preventDefault();
+        hasMoved = true;
+        event.preventDefault();
 
-      const clientX = event.type === 'mousemove' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
-      const clientY = event.type === 'mousemove' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
+        const clientX = event.type === 'mousemove' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
+        const clientY = event.type === 'mousemove' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
 
-      x = clientX - startX;
-      y = clientY - startY;
+        requestAnimationFrame(() => {
+            x = clientX - startX;
+            y = clientY - startY;
+        });
     }
 
     function handleEnd() {
@@ -156,9 +162,9 @@
 <section>
     {#if visible}
         <div class="hud" 
-            style="left: {x}px; top: {y}px;" 
+            style="transform: translate({x}px, {y}px);" 
             on:mousedown={handleStart} 
-            on:touchstart={handleStart}
+            on:touchstart|preventDefault={handleStart}
             role="button"
             tabindex="0"
         >
@@ -190,6 +196,10 @@
     justify-content: space-evenly;
     align-items: center;
     color: white;
+    touch-action: none;
+    user-select: none;
+    cursor: move;
+    will-change: transform;
 }
 
 .hud .row {
