@@ -21,11 +21,15 @@
     let startX: number;
     let startY: number;
 
-    const TAP_DELAY = 300; // ms between taps
-    const RESET_DELAY = 400; // ms to reset tap count
-
+    const TAP_DELAY = 300;
+    const RESET_DELAY = 400;
 
     function handleTouchEnd(e: TouchEvent) {
+        // Don't count as tap if we were dragging
+        if (hasMoved) {
+            return;
+        }
+
         const now = Date.now();
         const timeSinceLastTap = now - lastTapTime;
 
@@ -95,6 +99,10 @@
 
     function handleEnd() {
       isDragging = false;
+      // Reset hasMoved after a short delay to allow handleTouchEnd to check it
+      setTimeout(() => {
+        hasMoved = false;
+      }, 50);
     }
 
     let dispatch = createEventDispatcher();
@@ -188,6 +196,10 @@
     justify-content: space-evenly;
     align-items: center;
     color: white;
+    will-change: transform;
+    touch-action: none;
+    user-select: none;
+    cursor: move;
 }
 
 .hud .row {
