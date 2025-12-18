@@ -8,7 +8,7 @@
 // @author      feketefh
 // @updateURL   https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/QuizletLiveAC.user.js
 // @downloadURL https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/QuizletLiveAC.user.js
-// @version     0.5.8
+// @version     0.5.9
 // @license     MIT
 // @grant       unsafeWindow
 // ==/UserScript==
