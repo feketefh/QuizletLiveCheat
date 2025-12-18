@@ -21,15 +21,11 @@
     let startX: number;
     let startY: number;
 
-    const TAP_DELAY = 300;
-    const RESET_DELAY = 400;
+    const TAP_DELAY = 300; // ms between taps
+    const RESET_DELAY = 400; // ms to reset tap count
+
 
     function handleTouchEnd(e: TouchEvent) {
-        // Don't count as tap if we were dragging
-        if (hasMoved) {
-            return;
-        }
-
         const now = Date.now();
         const timeSinceLastTap = now - lastTapTime;
 
@@ -68,41 +64,31 @@
     });
 
     function handleStart(event: MouseEvent | TouchEvent) {
-        isDragging = true;
-        hasMoved = false;
+      isDragging = true;
+      hasMoved = false;
 
-        if (event.type === 'touchstart') {
-          event.preventDefault();
-        }
+      const clientX = event.type === 'mousedown' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
+      const clientY = event.type === 'mousedown' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
 
-        const clientX = event.type === 'mousedown' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
-        const clientY = event.type === 'mousedown' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
-
-        startX = clientX - x;
-        startY = clientY - y;
+      startX = clientX - x;
+      startY = clientY - y;
     }
 
     function handleMove(event: MouseEvent | TouchEvent) {
-        if (!isDragging) return;
+      if (!isDragging) return;
 
-        hasMoved = true;
-        event.preventDefault();
+      hasMoved = true;
+      event.preventDefault();
 
-        const clientX = event.type === 'mousemove' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
-        const clientY = event.type === 'mousemove' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
+      const clientX = event.type === 'mousemove' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
+      const clientY = event.type === 'mousemove' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
 
-        requestAnimationFrame(() => {
-            x = clientX - startX;
-            y = clientY - startY;
-        });
+      x = clientX - startX;
+      y = clientY - startY;
     }
 
     function handleEnd() {
       isDragging = false;
-      // Reset hasMoved after a short delay to allow handleTouchEnd to check it
-      setTimeout(() => {
-        hasMoved = false;
-      }, 50);
     }
 
     let dispatch = createEventDispatcher();
@@ -111,6 +97,14 @@
         helpMode += change;
         if (helpMode < 0) helpMode += helpModes.length;
         helpMode %= helpModes.length;
+
+        dispatch('helpMode', helpMode);
+        onhelpMode?.(new CustomEvent('helpMode', { detail: helpMode }));
+    }
+
+    function close() {
+        visible = false;
+        helpMode = 0;
 
         dispatch('helpMode', helpMode);
         onhelpMode?.(new CustomEvent('helpMode', { detail: helpMode }));
@@ -162,9 +156,9 @@
 <section>
     {#if visible}
         <div class="hud" 
-            style="transform: translate({x}px, {y}px);" 
+            style="left: {x}px; top: {y}px;" 
             on:mousedown={handleStart} 
-            on:touchstart|preventDefault={handleStart}
+            on:touchstart={handleStart}
             role="button"
             tabindex="0"
         >
@@ -196,10 +190,6 @@
     justify-content: space-evenly;
     align-items: center;
     color: white;
-    will-change: transform;
-    touch-action: none;
-    user-select: none;
-    cursor: move;
 }
 
 .hud .row {
