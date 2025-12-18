@@ -9,36 +9,30 @@
     const helpModes = ['None', 'Auto Answer (instant)', 'Auto Answer (wait)', 'Outline Correct Answer']
     let helpMode = 0;
     let lastHelpMode = 0;
-    let smallDevice: boolean = false;
 
     let tapCount = 0;
     let lastTapTime = 0;
     let tapTimeout: ReturnType<typeof setTimeout> | null = null;
     
+    let x = 10;
+    let y = 10;
+    let isDragging: boolean = false;
+    let hasMoved: boolean = false;
+    let startX: number;
+    let startY: number;
+
     const TAP_DELAY = 300; // ms between taps
     const RESET_DELAY = 400; // ms to reset tap count
-    
-    const attachListener = (node: any): void => {
-      // attach a media query listener to the window
-      const mediaQuery: MediaQueryList = window.matchMedia('(width <= 640px)');
 
-      // every time the media query matches or unmatches
-      mediaQuery.addEventListener('change', ({ matches }: MediaQueryListEvent) => {
-        // set the state of our variable
-        smallDevice = matches;
-      });
-    }
 
     function handleTouchEnd(e: TouchEvent) {
         const now = Date.now();
         const timeSinceLastTap = now - lastTapTime;
 
-        // Clear existing timeout
         if (tapTimeout) {
             clearTimeout(tapTimeout);
         }
 
-        // Increment or reset tap count based on timing
         if (timeSinceLastTap < TAP_DELAY) {
             tapCount++;
         } else {
@@ -47,13 +41,11 @@
 
         lastTapTime = now;
 
-        // Check if we've reached triple tap
         if (tapCount === 3) {
             multiTouchHandler();
             tapCount = 0;
             lastTapTime = 0;
         } else {
-            // Reset tap count after delay if no more taps
             tapTimeout = setTimeout(() => {
                 tapCount = 0;
             }, RESET_DELAY);
@@ -71,6 +63,34 @@
         }
     });
 
+    function handleStart(event: MouseEvent | TouchEvent) {
+      isDragging = true;
+      hasMoved = false;
+
+      const clientX = event.type === 'mousedown' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
+      const clientY = event.type === 'mousedown' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
+
+      startX = clientX - x;
+      startY = clientY - y;
+    }
+
+    function handleMove(event: MouseEvent | TouchEvent) {
+      if (!isDragging) return;
+
+      hasMoved = true;
+      event.preventDefault();
+
+      const clientX = event.type === 'mousemove' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
+      const clientY = event.type === 'mousemove' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
+
+      x = clientX - startX;
+      y = clientY - startY;
+    }
+
+    function handleEnd() {
+      isDragging = false;
+    }
+
     let dispatch = createEventDispatcher();
 
     function changeHelpMode(change: number) {
@@ -78,7 +98,6 @@
         if (helpMode < 0) helpMode += helpModes.length;
         helpMode %= helpModes.length;
 
-        // Call both dispatcher and callback prop
         dispatch('helpMode', helpMode);
         onhelpMode?.(new CustomEvent('helpMode', { detail: helpMode }));
     }
@@ -125,12 +144,24 @@
     }
 </script>
 
-<svelte:window on:keydown={onKeyDown} use:attachListener/>
+<svelte:window 
+    on:keydown={onKeyDown} 
+    on:mousemove={handleMove}
+    on:mouseup={handleEnd}
+    on:touchmove={handleMove}
+    on:touchend={handleEnd}
+/>
 
 
 <section>
     {#if visible}
-        <div class="hud">
+        <div class="hud" 
+            style="left: {x}px; top: {y}px;" 
+            on:mousedown={handleStart} 
+            on:touchstart={handleStart}
+            role="button"
+            tabindex="0"
+        >
             <button on:click={handleAnswer} class="answer">Answer Question</button>
             <div class="help">
                 <div>
@@ -149,8 +180,6 @@
 <style>
 .hud {
     position: absolute;
-    top: 10px;
-    left: 10px;
     width: 300px;
     height: 200px;
     z-index: 999999999999;
