@@ -108,14 +108,6 @@
         onhelpMode?.(new CustomEvent('helpMode', { detail: helpMode }));
     }
 
-    function close() {
-        visible = false;
-        helpMode = 0;
-
-        dispatch('helpMode', helpMode);
-        onhelpMode?.(new CustomEvent('helpMode', { detail: helpMode }));
-    }
-
     function handleAnswer() {
         dispatch('answer');
         onanswer?.();
@@ -196,10 +188,6 @@
     justify-content: space-evenly;
     align-items: center;
     color: white;
-    touch-action: none;
-    user-select: none;
-    cursor: move;
-    will-change: transform;
 }
 
 .hud .row {
