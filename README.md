@@ -30,5 +30,6 @@ Auto answer will only activate after a question is answered, be that with the bu
 1. Install an userscript manager:
     - Firefox: [TamperMonkey](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/) or [ViolentMonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/)
     - Chrome (and other Chromium based browsers): [TamperMonkey](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
-    - Safari: [Usrescripts](https://apps.apple.com/us/app/userscripts/id1463298887)
+    - Safari: [Userscripts](https://apps.apple.com/us/app/userscripts/id1463298887)
 2. Click on [this link](https://github.com/feketefh/QuizletLiveCheat/raw/refs/heads/main/build/QuizletLiveAC.user.js) to install the userscript.
+
