@@ -17,7 +17,6 @@
     let x = 10;
     let y = 10;
     let isDragging: boolean = false;
-    let hasMoved: boolean = false;
     let startX: number;
     let startY: number;
 
@@ -65,7 +64,6 @@
 
     function handleStart(event: MouseEvent | TouchEvent) {
       isDragging = true;
-      hasMoved = false;
 
       const clientX = event.type === 'mousedown' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
       const clientY = event.type === 'mousedown' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
@@ -74,25 +72,25 @@
       startY = clientY - y;
     }
 
+    function handleEnd() {
+        isDragging = false;
+    }
+
     function handleMove(event: MouseEvent | TouchEvent) {
       if (!isDragging) return;
-
-      hasMoved = true;
+ 
       event.preventDefault();
-
+ 
       const clientX = event.type === 'mousemove' ? (event as MouseEvent).clientX : (event as TouchEvent).touches[0].clientX;
       const clientY = event.type === 'mousemove' ? (event as MouseEvent).clientY : (event as TouchEvent).touches[0].clientY;
-
-      x = clientX - startX;
-      y = clientY - startY;
-    }
-
-    function handleEnd() {
-      isDragging = false;
-    }
-
-    function stopDragPropagation(e: TouchEvent) {
-        e.stopPropagation();
+ 
+      const hudWidth = 300;
+      const hudHeight = 200;
+      const maxX = window.innerWidth - hudWidth;
+      const maxY = window.innerHeight - hudHeight;
+ 
+      x = Math.min(Math.max(0, clientX - startX), maxX);
+      y = Math.min(Math.max(0, clientY - startY), maxY);
     }
 
     let dispatch = createEventDispatcher();
@@ -183,7 +181,7 @@
 
 <style>
 .hud {
-    position: absolute;
+    position: fixed;
     width: 300px;
     height: 200px;
     z-index: 999999999999;
